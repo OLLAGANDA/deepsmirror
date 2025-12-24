@@ -20,7 +20,17 @@ DeepMirror는 성격 분석 및 미러링을 위한 Spring Boot 기반 백엔드
    - `com.deepmirror.server.controller`
    - `com.deepmirror.server.dto`
 
-## 3. 빌드 및 실행 명령어
+## 3. 환경 설정
+### 환경변수 파일 (.env)
+**중요**: 프로젝트 실행 전 반드시 `.env` 파일을 생성해야 합니다.
+1. `.env.example` 파일을 복사: `cp .env.example .env`
+2. `.env` 파일에서 실제 값으로 수정:
+   - `POSTGRES_PASSWORD`: DB 비밀번호 설정
+   - `SPRING_DATASOURCE_PASSWORD`: DB 비밀번호 (위와 동일)
+   - `GEMINI_API_KEY`: Google AI Studio에서 발급받은 Gemini API 키
+3. **주의**: `.env` 파일은 `.gitignore`에 포함되어 git에 커밋되지 않습니다.
+
+## 4. 빌드 및 실행 명령어
 ### 빌드
 - `chmod +x gradlew` (권한 없을 시)
 - `./gradlew build -x test` (테스트 제외 빠른 빌드 - MVP 단계 권장)
@@ -33,19 +43,28 @@ DeepMirror는 성격 분석 및 미러링을 위한 Spring Boot 기반 백엔드
 ### 로컬 테스트 (단위 테스트)
 - `./gradlew test`
 
-## 4. 데이터베이스 설정
+## 5. 데이터베이스 설정
 - **DB**: PostgreSQL 15 (Docker Service: `db`)
 - **접속 정보**:
   - URL: `jdbc:postgresql://db:5432/deepmirror` (내부), `localhost:5432` (외부)
-  - User: `user`
-  - Password: `password_secure!` (docker-compose.yml과 일치시킬 것)
+  - User: `user` (환경변수로 관리)
+  - Password: `.env` 파일의 `POSTGRES_PASSWORD`로 설정
 - **JPA**: `ddl-auto: update` (자동 테이블 관리)
 
-## 5. 아키텍처 및 개발 패턴
+## 6. 아키텍처 및 개발 패턴
 1. **Entity**: `domain/` 패키지에 `@Entity` 클래스 생성.
-2. **Repository**: `repository/`에 `JpaRepository` 상속 인터페이스 생성.ss
+2. **Repository**: `repository/`에 `JpaRepository` 상속 인터페이스 생성.
 3. **DTO**: Entity를 직접 반환하지 말고, `dto/` 패키지의 DTO 객체로 변환하여 반환.
 4. **API**: REST Controller 사용.
 
-## 6. 주의사항
+## 7. API 문서 (Swagger UI)
+- **접속 URL**: http://localhost:8080/swagger-ui.html
+- **OpenAPI JSON**: http://localhost:8080/api-docs
+- Spring Boot 실행 후 브라우저에서 Swagger UI로 API 테스트 가능
+
+## 8. 보안 주의사항
+- **절대 금지**: `.env` 파일을 git에 커밋하지 마십시오.
+- **API 키 관리**: Gemini API 키는 반드시 `.env` 파일로 관리
+- **비밀번호**: 운영 환경에서는 강력한 비밀번호로 변경 필수
 - **포트**: 호스트의 8080 포트를 사용합니다.
+- **데이터베이스**: 외부 포트 노출 없이 내부 네트워크만 사용
