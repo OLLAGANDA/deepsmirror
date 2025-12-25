@@ -4,8 +4,13 @@ import com.deepmirror.server.domain.Result;
 import com.deepmirror.server.dto.ResultCreateRequest;
 import com.deepmirror.server.dto.ResultResponse;
 import com.deepmirror.server.repository.ResultRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -13,11 +18,13 @@ public class ResultService {
 
     private final ResultRepository resultRepository;
     private final GeminiService geminiService;
+    private final ObjectMapper objectMapper;
 
     // 생성자 주입 (Lombok 없이)
-    public ResultService(ResultRepository resultRepository, GeminiService geminiService) {
+    public ResultService(ResultRepository resultRepository, GeminiService geminiService, ObjectMapper objectMapper) {
         this.resultRepository = resultRepository;
         this.geminiService = geminiService;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -28,6 +35,18 @@ public class ResultService {
     public ResultResponse createResult(ResultCreateRequest request) {
         // DTO -> Entity 변환
         Result result = request.toEntity();
+
+        // detailScores를 JSON 문자열로 변환
+        if (request.getDetailScores() != null && !request.getDetailScores().isEmpty()) {
+            try {
+                String detailScoresJson = objectMapper.writeValueAsString(request.getDetailScores());
+                result.setDetailScores(detailScoresJson);
+            } catch (JsonProcessingException e) {
+                // JSON 변환 실패 시 로그 출력 및 null로 설정
+                System.err.println("Failed to serialize detailScores: " + e.getMessage());
+                result.setDetailScores(null);
+            }
+        }
 
         // AI 분석 수행
         String aiAnalysis = analyzePersonality(
@@ -46,6 +65,16 @@ public class ResultService {
 
         // Entity -> DTO 변환 후 반환
         return ResultResponse.fromEntity(savedResult);
+    }
+
+    /**
+     * ID로 결과 조회
+     * @param id 결과 ID (UUID)
+     * @return 결과 DTO (Optional)
+     */
+    public Optional<ResultResponse> getResult(UUID id) {
+        return resultRepository.findById(id)
+                .map(ResultResponse::fromEntity);
     }
 
     /**

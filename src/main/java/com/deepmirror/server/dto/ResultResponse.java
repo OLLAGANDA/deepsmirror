@@ -15,6 +15,7 @@ public class ResultResponse {
     private int agreeableness;
     private int neuroticism;
     private String aiAnalysis;
+    private String detailScores;
     private LocalDateTime createdAt;
 
     // 기본 생성자
@@ -24,7 +25,7 @@ public class ResultResponse {
     // 전체 생성자
     public ResultResponse(UUID id, String clientIp, int openness, int conscientiousness,
                           int extraversion, int agreeableness, int neuroticism,
-                          String aiAnalysis, LocalDateTime createdAt) {
+                          String aiAnalysis, String detailScores, LocalDateTime createdAt) {
         this.id = id;
         this.clientIp = clientIp;
         this.openness = openness;
@@ -33,6 +34,7 @@ public class ResultResponse {
         this.agreeableness = agreeableness;
         this.neuroticism = neuroticism;
         this.aiAnalysis = aiAnalysis;
+        this.detailScores = detailScores;
         this.createdAt = createdAt;
     }
 
@@ -67,6 +69,10 @@ public class ResultResponse {
 
     public String getAiAnalysis() {
         return aiAnalysis;
+    }
+
+    public String getDetailScores() {
+        return detailScores;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -106,6 +112,10 @@ public class ResultResponse {
         this.aiAnalysis = aiAnalysis;
     }
 
+    public void setDetailScores(String detailScores) {
+        this.detailScores = detailScores;
+    }
+
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
@@ -121,6 +131,7 @@ public class ResultResponse {
                 result.getAgreeableness(),
                 result.getNeuroticism(),
                 result.getAiAnalysis(),
+                result.getDetailScores(),
                 result.getCreatedAt()
         );
     }

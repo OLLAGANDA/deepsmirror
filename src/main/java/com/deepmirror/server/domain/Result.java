@@ -33,6 +33,9 @@ public class Result {
     @Column(columnDefinition = "TEXT")
     private String aiAnalysis;
 
+    @Column(columnDefinition = "TEXT")
+    private String detailScores;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -42,7 +45,7 @@ public class Result {
 
     // 전체 생성자
     public Result(String clientIp, int openness, int conscientiousness,
-                  int extraversion, int agreeableness, int neuroticism, String aiAnalysis) {
+                  int extraversion, int agreeableness, int neuroticism, String aiAnalysis, String detailScores) {
         this.clientIp = clientIp;
         this.openness = openness;
         this.conscientiousness = conscientiousness;
@@ -50,6 +53,7 @@ public class Result {
         this.agreeableness = agreeableness;
         this.neuroticism = neuroticism;
         this.aiAnalysis = aiAnalysis;
+        this.detailScores = detailScores;
         this.createdAt = LocalDateTime.now();
     }
 
@@ -94,6 +98,10 @@ public class Result {
         return aiAnalysis;
     }
 
+    public String getDetailScores() {
+        return detailScores;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -101,5 +109,9 @@ public class Result {
     // Setter (필요한 경우에만 사용)
     public void setAiAnalysis(String aiAnalysis) {
         this.aiAnalysis = aiAnalysis;
+    }
+
+    public void setDetailScores(String detailScores) {
+        this.detailScores = detailScores;
     }
 }

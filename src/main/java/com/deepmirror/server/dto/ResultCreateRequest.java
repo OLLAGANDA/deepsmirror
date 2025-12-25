@@ -1,6 +1,7 @@
 package com.deepmirror.server.dto;
 
 import com.deepmirror.server.domain.Result;
+import java.util.Map;
 
 public class ResultCreateRequest {
 
@@ -10,6 +11,7 @@ public class ResultCreateRequest {
     private int extraversion;
     private int agreeableness;
     private int neuroticism;
+    private Map<String, Integer> detailScores;
 
     // 기본 생성자
     public ResultCreateRequest() {
@@ -17,13 +19,14 @@ public class ResultCreateRequest {
 
     // 전체 생성자
     public ResultCreateRequest(String clientIp, int openness, int conscientiousness,
-                               int extraversion, int agreeableness, int neuroticism) {
+                               int extraversion, int agreeableness, int neuroticism, Map<String, Integer> detailScores) {
         this.clientIp = clientIp;
         this.openness = openness;
         this.conscientiousness = conscientiousness;
         this.extraversion = extraversion;
         this.agreeableness = agreeableness;
         this.neuroticism = neuroticism;
+        this.detailScores = detailScores;
     }
 
     // Getters
@@ -51,6 +54,10 @@ public class ResultCreateRequest {
         return neuroticism;
     }
 
+    public Map<String, Integer> getDetailScores() {
+        return detailScores;
+    }
+
     // Setters (JSON 역직렬화를 위해 필요)
     public void setClientIp(String clientIp) {
         this.clientIp = clientIp;
@@ -76,6 +83,10 @@ public class ResultCreateRequest {
         this.neuroticism = neuroticism;
     }
 
+    public void setDetailScores(Map<String, Integer> detailScores) {
+        this.detailScores = detailScores;
+    }
+
     // DTO -> Entity 변환
     public Result toEntity() {
         return new Result(
@@ -85,7 +96,8 @@ public class ResultCreateRequest {
                 this.extraversion,
                 this.agreeableness,
                 this.neuroticism,
-                null  // aiAnalysis는 아직 생성 전
+                null,  // aiAnalysis는 아직 생성 전
+                null   // detailScores는 서비스에서 JSON 변환 후 설정
         );
     }
 }

@@ -47,8 +47,8 @@ DeepMirror는 성격 분석 및 미러링을 위한 Spring Boot 기반 백엔드
 - **DB**: PostgreSQL 15 (Docker Service: `db`)
 - **접속 정보**:
   - URL: `jdbc:postgresql://db:5432/deepmirror` (내부), `localhost:5432` (외부)
-  - User: `user` (환경변수로 관리)
-  - Password: `.env` 파일의 `POSTGRES_PASSWORD`로 설정
+  - User: `${POSTGRES_USER}` (환경변수로 관리)
+  - Password: `${POSTGRES_PASSWORD}`
 - **JPA**: `ddl-auto: update` (자동 테이블 관리)
 
 ## 6. 아키텍처 및 개발 패턴
@@ -68,3 +68,4 @@ DeepMirror는 성격 분석 및 미러링을 위한 Spring Boot 기반 백엔드
 - **비밀번호**: 운영 환경에서는 강력한 비밀번호로 변경 필수
 - **포트**: 호스트의 8080 포트를 사용합니다.
 - **데이터베이스**: 외부 포트 노출 없이 내부 네트워크만 사용
+- **커밋**: 커밋은 사용자 요청시에만 실행합니다.
