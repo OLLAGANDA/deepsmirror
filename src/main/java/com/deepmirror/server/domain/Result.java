@@ -13,7 +13,7 @@ public class Result {
     private UUID id;
 
     @Column(nullable = false)
-    private String clientIp;
+    private String nickname;
 
     @Column(nullable = false)
     private int openness;
@@ -44,9 +44,9 @@ public class Result {
     }
 
     // 전체 생성자
-    public Result(String clientIp, int openness, int conscientiousness,
+    public Result(String nickname, int openness, int conscientiousness,
                   int extraversion, int agreeableness, int neuroticism, String aiAnalysis, String detailScores) {
-        this.clientIp = clientIp;
+        this.nickname = nickname;
         this.openness = openness;
         this.conscientiousness = conscientiousness;
         this.extraversion = extraversion;
@@ -70,8 +70,8 @@ public class Result {
         return id;
     }
 
-    public String getClientIp() {
-        return clientIp;
+    public String getNickname() {
+        return nickname;
     }
 
     public int getOpenness() {

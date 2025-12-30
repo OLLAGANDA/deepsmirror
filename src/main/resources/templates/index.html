@@ -49,6 +49,46 @@
             font-weight: 600;
             color: #374151;
         }
+
+        /* 토스트 메시지 스타일 */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #10b981;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        .toast.hiding {
+            animation: slideOut 0.3s ease-out;
+        }
     </style>
 </head>
 
@@ -67,15 +107,26 @@
         <div id="progress-container" class="hidden bg-white rounded-xl shadow-lg p-4 mb-6">
             <div class="flex justify-between items-center mb-2">
                 <span class="text-sm font-semibold text-gray-700">진행률</span>
-                <span class="text-sm font-bold text-indigo-600" id="progress-text">0 / 120</span>
+                <div class="flex items-center gap-3">
+                    <span class="text-sm font-bold text-indigo-600" id="progress-text">0 / 120</span>
+                </div>
             </div>
             <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                 <div id="progress-bar"
                     class="bg-gradient-to-r from-indigo-500 to-purple-600 h-3 rounded-full transition-all duration-300"
-                    style="width: 0%"></div>
+                    style="width: 0%">
+                </div>
             </div>
-            <div class="mt-2 text-center">
-                <span class="text-xs text-gray-500" id="progress-percentage">0%</span>
+            <div class="relative flex justify-end mt-2 text-center items-center h-6">
+                <span class="absolute left-1/2 -translate-x-1/2 text-xs text-gray-500 font-bold" 
+                    id="progress-percentage">
+                    0%
+                </span>
+                <button id="reset-btn"
+                        class="z-10 text-xs text-red-600 hover:text-red-700 font-medium underline"
+                        onclick="resetProgress()">
+                    처음부터 다시 하기
+                </button>
             </div>
         </div>
 
@@ -127,7 +178,8 @@
         let answers = {};
         let nickname = '';
         let currentPage = 0;
-        const itemsPerPage = 10;
+        const itemsPerPage = 5;
+        let autoAdvanceTimer = null; // 자동 페이지 넘김 타이머
 
         const domainNames = {
             'O': '개방성',
@@ -145,12 +197,94 @@
             'N': 'red'
         };
 
+        const STORAGE_KEY = 'deepmirror_progress';
+
+        // Save progress to localStorage
+        function saveProgress() {
+            const progressData = {
+                answers: answers,
+                currentPage: currentPage,
+                nickname: nickname,
+                timestamp: new Date().toISOString()
+            };
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(progressData));
+                console.log('Progress saved:', progressData);
+            } catch (error) {
+                console.error('Failed to save progress:', error);
+            }
+        }
+
+        // Load progress from localStorage
+        function loadProgress() {
+            try {
+                const savedData = localStorage.getItem(STORAGE_KEY);
+                if (savedData) {
+                    const progressData = JSON.parse(savedData);
+
+                    // 복구된 데이터 적용
+                    answers = progressData.answers || {};
+                    currentPage = progressData.currentPage || 0;
+                    nickname = progressData.nickname || '';
+
+                    // 답변이 있는 경우에만 복구 진행
+                    if (Object.keys(answers).length > 0) {
+                        console.log('Progress loaded:', progressData);
+
+                        // 닉네임 화면 숨기고 진행 화면 표시
+                        document.getElementById('nickname-screen').classList.add('hidden');
+                        document.getElementById('progress-container').classList.remove('hidden');
+                        document.getElementById('navigation-container').classList.remove('hidden');
+
+                        // 질문 렌더링 및 진행률 업데이트
+                        renderQuestions();
+                        updateProgress();
+
+                        // 토스트 메시지 표시
+                        showToast('이전 진행 상황을 불러왔습니다');
+
+                        return true;
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load progress:', error);
+            }
+            return false;
+        }
+
+        // Show toast message
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            // 3초 후 제거
+            setTimeout(() => {
+                toast.classList.add('hiding');
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
+        // Reset progress (처음부터 다시 하기)
+        function resetProgress() {
+            if (confirm('정말로 처음부터 다시 시작하시겠습니까? 모든 진행 상황이 삭제됩니다.')) {
+                localStorage.removeItem(STORAGE_KEY);
+                location.reload();
+            }
+        }
+
         // Load questions from JSON
         async function loadQuestions() {
             try {
                 const response = await fetch('/data/questions.json');
                 questions = await response.json();
                 console.log('Loaded', questions.length, 'questions');
+
+                // 질문 로드 후 진행 상황 복구 시도
+                loadProgress();
             } catch (error) {
                 console.error('Failed to load questions:', error);
                 alert('질문을 불러오는데 실패했습니다. 페이지를 새로고침해주세요.');
@@ -171,6 +305,12 @@
 
         // Render questions for current page
         function renderQuestions() {
+            // 페이지 전환 시 자동 넘김 타이머 취소
+            if (autoAdvanceTimer) {
+                clearTimeout(autoAdvanceTimer);
+                autoAdvanceTimer = null;
+            }
+
             const container = document.getElementById('questions-container');
             container.innerHTML = '';
 
@@ -257,6 +397,28 @@
         function handleAnswer(questionId, value) {
             answers[questionId] = parseInt(value);
             updateProgress();
+            saveProgress(); // 진행 상황 저장
+
+            // 자동 페이지 넘김 로직
+            // 기존 타이머가 있으면 취소
+            if (autoAdvanceTimer) {
+                clearTimeout(autoAdvanceTimer);
+                autoAdvanceTimer = null;
+            }
+
+            // 현재 페이지의 모든 문항이 응답되었는지 확인
+            if (isCurrentPageAnswered()) {
+                const totalPages = getTotalPages();
+                const isLastPage = currentPage === totalPages - 1;
+
+                // 마지막 페이지가 아닌 경우에만 자동 넘김
+                if (!isLastPage) {
+                    autoAdvanceTimer = setTimeout(() => {
+                        goToNextPage();
+                        autoAdvanceTimer = null;
+                    }, 200); // 200ms 지연
+                }
+            }
         }
 
         // Update progress bar
@@ -322,6 +484,7 @@
             } else {
                 currentPage++;
                 renderQuestions();
+                saveProgress(); // 페이지 이동 시 진행 상황 저장
             }
         }
 
@@ -330,6 +493,7 @@
             if (currentPage > 0) {
                 currentPage--;
                 renderQuestions();
+                saveProgress(); // 페이지 이동 시 진행 상황 저장
             }
         }
 
@@ -400,7 +564,7 @@
             const scores = calculateScores();
 
             const payload = {
-                clientIp: nickname,
+                nickname: nickname,
                 openness: scores.openness,
                 conscientiousness: scores.conscientiousness,
                 extraversion: scores.extraversion,
@@ -432,6 +596,9 @@
 
                 const result = await response.json();
 
+                // 성공 시 진행 상황 삭제
+                localStorage.removeItem(STORAGE_KEY);
+
                 // Redirect to result page
                 window.location.href = '/results/' + result.id;
 
@@ -457,6 +624,7 @@
             document.getElementById('progress-container').classList.remove('hidden');
             document.getElementById('navigation-container').classList.remove('hidden');
             renderQuestions();
+            saveProgress(); // 시작 시 진행 상황 저장
         });
 
         // Previous button handler

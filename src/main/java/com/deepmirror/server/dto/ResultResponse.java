@@ -8,7 +8,7 @@ import java.util.UUID;
 public class ResultResponse {
 
     private UUID id;
-    private String clientIp;
+    private String nickname;
     private int openness;
     private int conscientiousness;
     private int extraversion;
@@ -23,11 +23,11 @@ public class ResultResponse {
     }
 
     // 전체 생성자
-    public ResultResponse(UUID id, String clientIp, int openness, int conscientiousness,
+    public ResultResponse(UUID id, String nickname, int openness, int conscientiousness,
                           int extraversion, int agreeableness, int neuroticism,
                           String aiAnalysis, String detailScores, LocalDateTime createdAt) {
         this.id = id;
-        this.clientIp = clientIp;
+        this.nickname = nickname;
         this.openness = openness;
         this.conscientiousness = conscientiousness;
         this.extraversion = extraversion;
@@ -43,8 +43,8 @@ public class ResultResponse {
         return id;
     }
 
-    public String getClientIp() {
-        return clientIp;
+    public String getNickname() {
+        return nickname;
     }
 
     public int getOpenness() {
@@ -84,8 +84,8 @@ public class ResultResponse {
         this.id = id;
     }
 
-    public void setClientIp(String clientIp) {
-        this.clientIp = clientIp;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public void setOpenness(int openness) {
@@ -124,7 +124,7 @@ public class ResultResponse {
     public static ResultResponse fromEntity(Result result) {
         return new ResultResponse(
                 result.getId(),
-                result.getClientIp(),
+                result.getNickname(),
                 result.getOpenness(),
                 result.getConscientiousness(),
                 result.getExtraversion(),

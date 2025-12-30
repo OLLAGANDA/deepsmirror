@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class ResultCreateRequest {
 
-    private String clientIp;
+    private String nickname;
     private int openness;
     private int conscientiousness;
     private int extraversion;
@@ -18,9 +18,9 @@ public class ResultCreateRequest {
     }
 
     // 전체 생성자
-    public ResultCreateRequest(String clientIp, int openness, int conscientiousness,
+    public ResultCreateRequest(String nickname, int openness, int conscientiousness,
                                int extraversion, int agreeableness, int neuroticism, Map<String, Integer> detailScores) {
-        this.clientIp = clientIp;
+        this.nickname = nickname;
         this.openness = openness;
         this.conscientiousness = conscientiousness;
         this.extraversion = extraversion;
@@ -30,8 +30,8 @@ public class ResultCreateRequest {
     }
 
     // Getters
-    public String getClientIp() {
-        return clientIp;
+    public String getNickname() {
+        return nickname;
     }
 
     public int getOpenness() {
@@ -59,8 +59,8 @@ public class ResultCreateRequest {
     }
 
     // Setters (JSON 역직렬화를 위해 필요)
-    public void setClientIp(String clientIp) {
-        this.clientIp = clientIp;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public void setOpenness(int openness) {
@@ -90,7 +90,7 @@ public class ResultCreateRequest {
     // DTO -> Entity 변환
     public Result toEntity() {
         return new Result(
-                this.clientIp,
+                this.nickname,
                 this.openness,
                 this.conscientiousness,
                 this.extraversion,
