@@ -1,17 +1,39 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <!-- Google Analytics (GA4) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-B74HV76Z16"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-B74HV76Z16');
+    </script>
+
+    <!-- 기본 메타 태그 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>분석 결과 - DeepMirror</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <!-- Open Graph 메타 태그 -->
+    <!-- 페이지 정보 -->
+    <title>DeepMirror | 분석 결과 리포트</title>
+    <meta name="description" content="Big Five 성격 분석 결과를 확인하세요. AI가 분석한 당신의 성격 특성과 세부 점수를 시각화된 차트로 제공합니다.">
+    <meta name="keywords" content="성격 분석 결과, Big Five 리포트, 성격 진단 결과, IPIP 점수, AI 성격 분석, 심리 테스트 결과">
+    <meta name="author" content="DeepMirror Team">
+
+    <!-- 파비콘 -->
+    <link rel="icon" href="/images/favicon.png" type="image/png">
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+
+    <!-- Open Graph 메타 태그 (소셜 공유용) -->
     <meta property="og:type" content="website">
     <meta property="og:title" th:content="'DeepMirror: ' + ${result.nickname} + '님의 성격 분석 결과'">
     <meta property="og:description" content="나의 성격 유형과 상세 분석 결과를 확인해보세요!">
     <meta property="og:image" content="https://via.placeholder.com/1200x630/6366f1/ffffff?text=DeepMirror+Result">
     <meta property="og:url" th:content="'http://localhost:8080/results/' + ${result.id}">
 
+    <!-- 외부 스타일시트 및 스크립트 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -645,6 +667,39 @@
         }
 
         window.addEventListener('load', initializeApp);
+    </script>
+
+    <footer class="py-8 mt-10 text-center border-t border-gray-200">
+        <div class="flex justify-center items-center relative max-w-3xl mx-auto px-4">
+            <p class="text-sm text-gray-500 flex-1 text-center">
+                Copyright &copy; <span id="current-year"></span>
+                <span class="font-bold text-gray-700">DeepMirror</span>.
+                All rights reserved.
+            </p>
+            <a href="https://github.com/OLLAGANDA/deepmirror"
+               target="_blank"
+               aria-label="GitHub Repository"
+               class="text-gray-400 hover:text-gray-900 transition-transform hover:scale-110 absolute right-4">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
+                </svg>
+            </a>
+        </div>
+
+        <p class="mt-2 text-[10px] text-gray-400">
+            Based on <a href="https://ipip.ori.org/" target="_blank" class="hover:underline">IPIP-120</a> inventory.
+            Inspired by <a href="https://github.com/rubynor/bigfive-web" target="_blank" class="hover:underline">rubynor/bigfive-web</a> (MIT License).
+            <a href="https://www.flaticon.com/free-icons/mirror" title="mirror icons">Mirror icons created by MYS Design - Flaticon</a>
+        </p>
+
+        <div class="mt-2 text-xs text-gray-400">
+            <a href="/" class="hover:text-gray-600">홈으로</a>
+        </div>
+    </footer>
+
+    <script>
+        // 현재 연도 표시
+        document.getElementById('current-year').textContent = new Date().getFullYear();
     </script>
 </body>
 </html>

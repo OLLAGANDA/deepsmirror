@@ -22,12 +22,15 @@ services:
       dockerfile: Dockerfile
     container_name: deepmirror_app
     ports:
-      - "8080:8080" # 노트북의 8080 포트를 앱 서버의 8080 포트로 연결
+      - "127.0.0.1:8080:8080" # 로컬호스트 전용 (Cloudflare Tunnel 경유 필수)
     environment:
       # DB 연결 설정. 'db'는 위에서 정의한 서비스명입니다.
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      # JPA 설정 (환경별로 다름: 개발=update, 프로덕션=validate)
+      JPA_DDL_AUTO: ${JPA_DDL_AUTO}
+      # Gemini AI API 키 (민감 정보)
       GEMINI_API_KEY: ${GEMINI_API_KEY}
     depends_on:
       - db # db가 먼저 실행된 후 app이 실행되도록 설정

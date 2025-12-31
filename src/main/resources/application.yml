@@ -13,7 +13,7 @@ spring:
   # JPA (DB 테이블 자동 생성)
   jpa:
     hibernate:
-      ddl-auto: update  # 서버 켜질 때 Entity 보고 테이블 자동 생성/수정
+      ddl-auto: ${JPA_DDL_AUTO:update}  # 개발: update, 프로덕션: validate/none
     show-sql: true      # 실행되는 SQL을 로그에 보여줌 (디버깅용)
     properties:
       hibernate:
@@ -28,8 +28,18 @@ spring:
           model: gemini-3-flash-preview
           temperature: 0.7
 
+  # 프로덕션 보안 설정
+  devtools:
+    restart:
+      enabled: false
+
 server:
   port: 8080
+  error:
+    include-message: never
+    include-stacktrace: never
+    whitelabel:
+      enabled: false
 
 # SpringDoc OpenAPI (Swagger UI) 설정
 springdoc:
