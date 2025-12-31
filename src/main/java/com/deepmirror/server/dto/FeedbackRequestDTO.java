@@ -1,9 +1,28 @@
 package com.deepmirror.server.dto;
 
+/**
+ * 피드백 제출 요청 DTO
+ *
+ * <p>클라이언트로부터 받은 사용자 피드백 정보를 담는 데이터 전송 객체입니다.</p>
+ *
+ * @author DeepMirror Team
+ * @version 1.0
+ */
 public class FeedbackRequestDTO {
 
+    /**
+     * 발신자 이름
+     */
     private String senderName;
+
+    /**
+     * 발신자 이메일 주소
+     */
     private String email;
+
+    /**
+     * 피드백 내용
+     */
     private String content;
 
     // 기본 생성자
