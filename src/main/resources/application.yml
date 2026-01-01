@@ -28,6 +28,10 @@ spring:
           model: gemini-3-flash-preview
           temperature: 0.7
 
+# Discord Webhook 설정
+discord:
+  webhook-url: ${DISCORD_WEBHOOK_URL:}
+
   # 프로덕션 보안 설정
   devtools:
     restart:

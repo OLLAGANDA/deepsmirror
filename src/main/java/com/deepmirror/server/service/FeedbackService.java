@@ -17,9 +17,12 @@ public class FeedbackService {
     private static final Logger log = LoggerFactory.getLogger(FeedbackService.class);
 
     private final FeedbackRepository feedbackRepository;
+    private final DiscordNotificationService discordNotificationService;
 
-    public FeedbackService(FeedbackRepository feedbackRepository) {
+    public FeedbackService(FeedbackRepository feedbackRepository,
+                           DiscordNotificationService discordNotificationService) {
         this.feedbackRepository = feedbackRepository;
+        this.discordNotificationService = discordNotificationService;
     }
 
     /**
@@ -36,6 +39,9 @@ public class FeedbackService {
         Feedback savedFeedback = feedbackRepository.save(feedback);
 
         log.info("피드백 저장 완료 - ID: {}", savedFeedback.getId());
+
+        // Discord 알림 전송
+        sendDiscordNotification(savedFeedback);
 
         return FeedbackResponseDTO.fromEntity(savedFeedback, "소중한 의견 감사합니다!");
     }
@@ -74,5 +80,21 @@ public class FeedbackService {
                 request.getEmail().trim(),
                 request.getContent().trim()
         );
+    }
+
+    /**
+     * Discord 알림 전송
+     */
+    private void sendDiscordNotification(Feedback feedback) {
+        String message = String.format(
+                "📢 [DeepMirror] 새로운 문의가 도착했습니다!\n" +
+                "- 보낸사람: %s (%s)\n" +
+                "- 내용: %s",
+                feedback.getSenderName(),
+                feedback.getEmail(),
+                feedback.getContent()
+        );
+
+        discordNotificationService.sendNotification(message);
     }
 }

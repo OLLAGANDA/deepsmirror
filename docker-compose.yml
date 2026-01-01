@@ -32,6 +32,8 @@ services:
       JPA_DDL_AUTO: ${JPA_DDL_AUTO}
       # Gemini AI API 키 (민감 정보)
       GEMINI_API_KEY: ${GEMINI_API_KEY}
+      # Discord Webhook URL (선택사항)
+      DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL:-}
     depends_on:
       - db # db가 먼저 실행된 후 app이 실행되도록 설정
     restart: always
