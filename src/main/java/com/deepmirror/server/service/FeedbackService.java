@@ -87,7 +87,7 @@ public class FeedbackService {
      */
     private void sendDiscordNotification(Feedback feedback) {
         String message = String.format(
-                "📢 [DeepMirror] 새로운 문의가 도착했습니다!\n" +
+                "📢 [Deeps Mirror] 새로운 문의가 도착했습니다!\n" +
                 "- 보낸사람: %s (%s)\n" +
                 "- 내용: %s",
                 feedback.getSenderName(),

@@ -5,8 +5,8 @@ spring:
   # 데이터베이스 연결 설정
   datasource:
     # 'db'는 docker-compose.yml에서 정한 서비스 이름입니다 (Docker DNS)
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://db:5432/deepmirror}
-    username: ${SPRING_DATASOURCE_USERNAME:user}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
 

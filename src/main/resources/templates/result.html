@@ -17,10 +17,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <!-- 페이지 정보 -->
-    <title>DeepMirror | 분석 결과 리포트</title>
+    <title>DeepsMirror | 분석 결과 리포트</title>
     <meta name="description" content="Big Five 성격 분석 결과를 확인하세요. AI가 분석한 당신의 성격 특성과 세부 점수를 시각화된 차트로 제공합니다.">
     <meta name="keywords" content="성격 분석 결과, Big Five 리포트, 성격 진단 결과, IPIP 점수, AI 성격 분석, 심리 테스트 결과">
-    <meta name="author" content="DeepMirror Team">
+    <meta name="author" content="DeepsMirror Team">
 
     <!-- 파비콘 -->
     <link rel="icon" href="/images/favicon.png" type="image/png">
@@ -28,10 +28,10 @@
 
     <!-- Open Graph 메타 태그 (소셜 공유용) -->
     <meta property="og:type" content="website">
-    <meta property="og:title" th:content="'DeepMirror: ' + ${result.nickname} + '님의 성격 분석 결과'">
+    <meta property="og:title" th:content="'DeepsMirror: ' + ${result.nickname} + '님의 성격 분석 결과'">
     <meta property="og:description" content="나의 성격 유형과 상세 분석 결과를 확인해보세요!">
-    <meta property="og:image" content="https://via.placeholder.com/1200x630/6366f1/ffffff?text=DeepMirror+Result">
-    <meta property="og:url" th:content="'http://localhost:8080/results/' + ${result.id}">
+    <meta property="og:image" content="https://deepsmirror.com/images/favicon.png">
+    <meta property="og:url" th:content="'https://deepsmirror.comresults/' + ${result.id}">
 
     <!-- 외부 스타일시트 및 스크립트 -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -451,7 +451,7 @@
 
         async function shareResult() {
             const shareData = {
-                title: 'DeepMirror: ' + USER_DATA.nickname + '님의 성격 분석 결과',
+                title: 'DeepsMirror: ' + USER_DATA.nickname + '님의 성격 분석 결과',
                 text: '나의 성격 유형과 상세 분석 결과를 확인해보세요!',
                 url: window.location.href
             };
@@ -673,10 +673,10 @@
         <div class="flex justify-center items-center relative max-w-3xl mx-auto px-4">
             <p class="text-sm text-gray-500 flex-1 text-center">
                 Copyright &copy; <span id="current-year"></span>
-                <span class="font-bold text-gray-700">DeepMirror</span>.
+                <span class="font-bold text-gray-700">DeepsMirror</span>.
                 All rights reserved.
             </p>
-            <a href="https://github.com/OLLAGANDA/deepmirror"
+            <a href="https://github.com/OLLAGANDA/deepsmirror"
                target="_blank"
                aria-label="GitHub Repository"
                class="text-gray-400 hover:text-gray-900 transition-transform hover:scale-110 absolute right-4">

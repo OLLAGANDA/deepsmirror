@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # 1. PostgreSQL 데이터베이스
   db:
@@ -12,7 +10,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - db_data:/var/lib/postgresql/data # DB 데이터를 SSD에 영구 저장
-    # 외부 포트 노출 금지: DB는 앱 서버만 접근해야 보안에 유리
+    ports:
+      - "127.0.0.1:5432:5432"
     restart: always
 
   # 2. Spring Boot 앱 서버 (아직 이미지가 없으므로 'build'만 설정)
@@ -36,6 +35,13 @@ services:
       DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL:-}
     depends_on:
       - db # db가 먼저 실행된 후 app이 실행되도록 설정
+    restart: always
+
+  # 3. Cloudflare Tunnel
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: deepsmirror_tunnel
+    command: tunnel run --token ${CLOUDFLARE_TUNNEL_TOKEN}
     restart: always
 
 # 영구 저장을 위한 볼륨 정의
