@@ -106,6 +106,38 @@
         .toast.hiding {
             animation: slideOut 0.3s ease-out;
         }
+
+        /* 토글 스위치 스타일 */
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background-color: #d1d5db;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background-color: #6366f1;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(20px);
+        }
     </style>
 </head>
 
@@ -125,6 +157,12 @@
             <div class="flex justify-between items-center mb-2">
                 <span class="text-sm font-semibold text-gray-700">진행률</span>
                 <div class="flex items-center gap-3">
+                    <!-- 자동 넘김 토글 -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-gray-500">자동 넘김</span>
+                        <div id="auto-advance-toggle" class="toggle-switch active" onclick="toggleAutoAdvance()" title="답변 선택 시 자동으로 다음 페이지로 이동합니다"></div>
+                    </div>
+                    <span class="text-gray-300">|</span>
                     <span class="text-sm font-bold text-indigo-600" id="progress-text">0 / 120</span>
                 </div>
             </div>
@@ -296,6 +334,7 @@
                 SCORE_RANGE: 100
             },
             STORAGE_KEY: 'deepmirror_progress',
+            AUTO_ADVANCE_KEY: 'deepmirror_auto_advance',
             DOMAIN_NAMES: {
                 'O': '개방성',
                 'C': '성실성',
@@ -327,10 +366,50 @@
         let nickname = '';
         let currentPage = 0;
         let autoAdvanceTimer = null;
+        let autoAdvanceEnabled = true;
 
         // ========================================
         // [Storage & Persistence]
         // ========================================
+        function loadAutoAdvanceSetting() {
+            try {
+                const saved = localStorage.getItem(CONFIG.AUTO_ADVANCE_KEY);
+                if (saved !== null) {
+                    autoAdvanceEnabled = saved === 'true';
+                }
+                updateAutoAdvanceToggleUI();
+            } catch (error) {
+                console.error('Failed to load auto advance setting:', error);
+            }
+        }
+
+        function saveAutoAdvanceSetting() {
+            try {
+                localStorage.setItem(CONFIG.AUTO_ADVANCE_KEY, autoAdvanceEnabled.toString());
+            } catch (error) {
+                console.error('Failed to save auto advance setting:', error);
+            }
+        }
+
+        function toggleAutoAdvance() {
+            autoAdvanceEnabled = !autoAdvanceEnabled;
+            saveAutoAdvanceSetting();
+            updateAutoAdvanceToggleUI();
+        }
+
+        function updateAutoAdvanceToggleUI() {
+            const toggle = document.getElementById('auto-advance-toggle');
+            if (toggle) {
+                if (autoAdvanceEnabled) {
+                    toggle.classList.add('active');
+                    toggle.title = '답변 선택 시 자동으로 다음 페이지로 이동합니다';
+                } else {
+                    toggle.classList.remove('active');
+                    toggle.title = '자동 넘김이 꺼져있습니다. 다음 버튼을 직접 눌러주세요.';
+                }
+            }
+        }
+
         function saveProgress() {
             const progressData = {
                 answers: answers,
@@ -395,6 +474,7 @@
         }
 
         function init() {
+            loadAutoAdvanceSetting();
             loadQuestions();
         }
 
@@ -484,7 +564,7 @@
             const scaleHTML = `
                 <div class="flex items-center justify-between gap-2">
                     ${CONFIG.LIKERT_OPTIONS.map(option => `
-                        <label class="flex-1 cursor-pointer">
+                        <label class="flex-1 cursor-pointer" title="${option.label}">
                             <input
                                 type="radio"
                                 name="question-${questionId}"
@@ -495,7 +575,7 @@
                             >
                             <div class="flex flex-col items-center">
                                 <div class="option-circle w-10 h-10 sm:w-12 sm:h-12 rounded-full border-4 border-gray-300 flex items-center justify-center
-                                    hover:border-gray-400 transition-all duration-200 font-bold text-gray-600">
+                                    hover:border-gray-400 hover:scale-110 transition-all duration-200 font-bold text-gray-600">
                                     ${option.value}
                                 </div>
                             </div>
@@ -604,6 +684,9 @@
         }
 
         function scheduleAutoAdvance() {
+            if (!autoAdvanceEnabled) {
+                return;
+            }
             if (isCurrentPageAnswered() && !isLastPageReached()) {
                 autoAdvanceTimer = setTimeout(() => {
                     goToNextPage();
